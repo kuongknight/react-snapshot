@@ -25,6 +25,10 @@ export default (protocol, host, path, delay) => {
       created: (err, window) => {
         if (err) return reject(err)
         if (!window) return reject(`Looks like no page exists at ${url}`)
+        window.scrollTo = function () {};
+        window.open = function () {};
+        window.print = function () {};
+        window.alert = function () {};
         window.reactSnapshotRender = () => {
           reactSnapshotRenderCalled = true
           setTimeout(() => {
@@ -36,12 +40,6 @@ export default (protocol, host, path, delay) => {
         if (!reactSnapshotRenderCalled) {
           reject("'render' from react-snapshot was never called. Did you replace the call to ReactDOM.render()?")
         }
-      },
-      beforeParse(window) {
-        window.scrollTo = window.console.log.bind(window.console);
-        window.open = window.console.log.bind(window.console);
-        window.print = window.console.log.bind(window.console);
-        window.alert = window.console.log.bind(window.console);
       }
     })
   })
