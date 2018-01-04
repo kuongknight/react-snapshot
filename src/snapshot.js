@@ -36,6 +36,12 @@ export default (protocol, host, path, delay) => {
         if (!reactSnapshotRenderCalled) {
           reject("'render' from react-snapshot was never called. Did you replace the call to ReactDOM.render()?")
         }
+      },
+      beforeParse(window) {
+        window.scrollTo = window.console.log.bind(window.console);
+        window.open = window.console.log.bind(window.console);
+        window.print = window.console.log.bind(window.console);
+        window.alert = window.console.log.bind(window.console);
       }
     })
   })
