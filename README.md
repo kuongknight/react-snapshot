@@ -1,4 +1,4 @@
-# 📸 React Snapshot
+# React Snapshot
 
 A zero-configuration static pre-renderer for React apps. Starting by targeting Create React App (because it's great)
 
@@ -12,28 +12,14 @@ The snapshots still have the normal JS bundle included, so once that downloads t
 
 ## The How To
 
-- First, `npm i -D react-snapshot`
-- Second, open your package.json and change `"scripts"` from
+- First, ensure you have Google Chrome installed
+- Second, `npm i -D react-snapshot`
+- Third, open your package.json and change `"scripts"` from
 
 ```diff
 - "build": "react-scripts build"
 + "build": "react-scripts build && react-snapshot"
 ```
-
-- Third, change your usage of `react-dom`:
-
-```diff
-- import ReactDOM from 'react-dom';
-+ import { render } from 'react-snapshot';
-
-- ReactDOM.render(
-+ render(
-    <App/>,
-    document.getElementById('root')
-  );
-```
-
-This calls `ReactDOM.render` in development and `ReactDOMServer.renderToString` when prerendering. If I can make this invisible I will but I can't think how at the moment.
 
 ## Options
 You can specify additional paths as entry points for crawling that would otherwise not be found. It's also possible to exclude particular paths from crawling. Simply add a section called `"reactSnapshot"` to your package.json.
@@ -47,8 +33,7 @@ You can specify additional paths as entry points for crawling that would otherwi
     "exclude": [
       "/signup",
       "/other-path/exclude-me/**"
-    ],
-    "snapshotDelay": 300
+    ]
   }
 ```
 
@@ -71,8 +56,6 @@ It's pretty simple in principle:
 - Repeat.
 
 There's a few more steps to it, but not much.
-
-React-snapshot will crawl all links that it finds. You can create "site map" page, which will contain links to all pages.
 
 - We move `build/index.html` to `build/200.html` at the beginning, because it's a nice convention. Hosts like [surge.sh](https://surge.sh) understand this, serving `200.html` if no snapshot exists for a URL. If you use a different host I'm sure you can make it do the same.
 - `pushstate-server` is used to serve the `build` directory & serving `200.html` by default
