@@ -42,37 +42,12 @@ export default class Crawler {
     return this.chromy
       .goto(`${this.protocol}//${this.host}${urlPath}`)
       .evaluate(() => {
-        const tagAttributeMap = {
-          'a': 'href',
-          'iframe': 'src'
-        }
-
         const html = window.document.documentElement.outerHTML
-
-        const urls = Object.keys(tagAttributeMap).reduce((arr, tagName) => {
-          const urlAttribute = tagAttributeMap[tagName]
-          const elements = document.querySelectorAll(`${tagName}[${urlAttribute}]`)
-          const urls = Array.from(elements).map(element => {
-            if (element.getAttribute('target') === '_blank') return
-            return element.getAttribute(urlAttribute)
-          })
-          return arr.concat(urls)
-        }, [])
         return {
-          html,
-          urls
+          html
         }
       })
       .result((res) => {
-        res.urls.forEach(u => {
-          const href = url.parse(u)
-          if (href.protocol || href.host || href.path === null) return
-          const relativePath = url.resolve(urlPath, href.path)
-          if (path.extname(relativePath) !== '.html' && path.extname(relativePath) !== '') return
-          if (this.processed[relativePath]) return
-          if (this.exclude.filter((regex) => regex.test(relativePath)).length > 0) return
-          this.paths.push(relativePath)
-        })
         this.handler({ urlPath, html: res.html })
       })
       .end()
